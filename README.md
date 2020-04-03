@@ -10,14 +10,14 @@ See https://github.com/rfjakob/earlyoom/issues/183 for the raison d'être.
 
 
 Compile
-=======
+-------
 
 ```
 make
 ```
 
 Test
-====
+----
 
 Run `systembus-notify` (should stop with no output), then in another
 terminal, run
@@ -31,7 +31,7 @@ as a desktop notification.
 
 
 Dependencies
-============
+------------
 
 systembus-notify uses the `sd-bus` D-Bus library that is part of `libsystemd`.
 Install like this:
