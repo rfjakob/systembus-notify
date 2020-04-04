@@ -1,7 +1,7 @@
 systembus-notify - system bus notification daemon
 =================================================
 
-Tiny daemon that listens for `net.nuetzlich.SystemNotifications`
+Tiny daemon that listens for `net.nuetzlich.SystemNotifications.Notify`
 signals on the D-Bus **system** bus and shows them as
 [desktop notifications](https://developer.gnome.org/notification-spec/)
 using the **user** bus.
