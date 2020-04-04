@@ -12,29 +12,36 @@ See https://github.com/rfjakob/earlyoom/issues/183 for the raison d'être.
 Compile
 -------
 
+Just run
+
 ```
 make
+```
+
+If you want `systembus-notify` to automatically start when you log in,
+also run (no sudo required):
+
+```
+make install
 ```
 
 Test
 ----
 
-Run `systembus-notify` (should stop with no output), then in another
-terminal, run
+Just run
 
 ```
-dbus-send --system --type=signal / net.nuetzlich.SystemNotifications.Notify "string:hello world"
+make test
 ```
 
-You should see "hello world" printed out by `systembus-notify` and also see "hello world"
-as a desktop notification.
+You should see "systembus-notify test message" as a desktop notification.
 
 
 Dependencies
 ------------
 
 systembus-notify uses the `sd-bus` D-Bus library that is part of `libsystemd`.
-Install like this:
+Install it like this:
 
 Debian / Ubuntu
 
