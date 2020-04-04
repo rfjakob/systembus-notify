@@ -11,3 +11,6 @@ install: systembus-notify
 	mkdir -p ${HOME}/bin ${HOME}/.config/autostart
 	cp systembus-notify ${HOME}/bin
 	cp systembus-notify.desktop ${HOME}/.config/autostart
+
+test: systembus-notify
+	./testmessage.sh
