@@ -36,6 +36,13 @@ make test
 
 You should see "systembus-notify test" as a desktop notification.
 
+Or manually:
+
+```
+./systembus-notify &
+dbus-send --system --type=signal / net.nuetzlich.SystemNotifications.Notify 'string:summary text only'
+dbus-send --system --type=signal / net.nuetzlich.SystemNotifications.Notify 'string:summary text' 'string:and body text'
+```
 
 Dependencies
 ------------
