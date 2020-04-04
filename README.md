@@ -40,8 +40,8 @@ Or manually:
 
 ```
 ./systembus-notify &
-dbus-send --system --type=signal / net.nuetzlich.SystemNotifications.Notify 'string:summary text only'
-dbus-send --system --type=signal / net.nuetzlich.SystemNotifications.Notify 'string:summary text' 'string:and body text'
+dbus-send --system / net.nuetzlich.SystemNotifications.Notify 'string:summary text only'
+dbus-send --system / net.nuetzlich.SystemNotifications.Notify 'string:summary text' 'string:and body text'
 ```
 
 Dependencies
