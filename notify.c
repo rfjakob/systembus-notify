@@ -23,7 +23,7 @@ void notify(sd_bus* bus, const char* summary)
     ret = sd_bus_message_append(m, "susssasa{sv}i",
         "system-notify", // STRING app_name
         &u, // UINT32 replaces_id
-        NULL, // STRING app_icon
+        "utilities-system-monitor", // STRING app_icon
         summary, // STRING summary
         NULL, // STRING body
         0, // ARRAY actions
