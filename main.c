@@ -47,9 +47,8 @@ int main(int argc, char* argv[])
         exit(1);
     }
     // Connect D-Bus signal handler
-    ret = sd_bus_match_signal(system_bus, NULL, NULL, NULL,
-        "net.nuetzlich.SystemNotifications", "Notify",
-        handle_signal, NULL);
+    const char *match_rule = "type='signal',interface='net.nuetzlich.SystemNotifications',member='Notify'";
+    ret = sd_bus_add_match(system_bus, NULL, match_rule, handle_signal, NULL);
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_bus_match_signal: %s\n", strerror(-ret));
         exit(1);
