@@ -34,7 +34,7 @@ Just run
 make test
 ```
 
-You should see "systembus-notify test message" as a desktop notification.
+You should see "systembus-notify test" as a desktop notification.
 
 
 Dependencies
@@ -54,3 +54,10 @@ Fedora
 ```
 dnf install systemd-devel
 ```
+
+See Also
+--------
+
+Original idea is from https://wiki.debianforum.de/Desktop-Notification_von_Systemservice_mittels_dbus (German).
+
+Similar thing implemented in Python: https://github.com/xundeenergie/system-notification

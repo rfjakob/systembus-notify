@@ -15,14 +15,18 @@ int handle_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_error)
     (void)userdata;
     (void)ret_error;
 
-    const char* text = NULL;
-    int ret = sd_bus_message_read_basic(m, 's', &text);
+    const char* summary = NULL;
+    int ret = sd_bus_message_read_basic(m, 's', &summary);
     if (ret < 0) {
         fprintf(stderr, "sd_bus_message_read_basic: %s\n", strerror(-ret));
         return 0;
     }
-    puts(text);
-    notify(user_bus, text);
+    // body is optional. It stays NULL when the signal does not contain
+    // a second string value.
+    const char* body = NULL;
+    sd_bus_message_read_basic(m, 's', &body);
+    printf("%s\n%s\n", summary, body);
+    notify(user_bus, summary, body);
     return 0;
 }
 
@@ -47,7 +51,7 @@ int main(int argc, char* argv[])
         exit(1);
     }
     // Connect D-Bus signal handler
-    const char *match_rule = "type='signal',interface='net.nuetzlich.SystemNotifications',member='Notify'";
+    const char* match_rule = "type='signal',interface='net.nuetzlich.SystemNotifications',member='Notify'";
     ret = sd_bus_add_match(system_bus, NULL, match_rule, handle_signal, NULL);
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_bus_match_signal: %s\n", strerror(-ret));

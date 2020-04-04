@@ -3,6 +3,6 @@
 #ifndef NOTIFY_H
 #define NOTIFY_H
 
-void notify(sd_bus* bus, const char* summary);
+void notify(sd_bus* bus, const char* summary, const char* body);
 
 #endif

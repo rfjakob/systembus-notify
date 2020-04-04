@@ -6,7 +6,7 @@
 // notify sends a desktop notification according to the
 // Desktop Notifications Specification
 // (https://developer.gnome.org/notification-spec/).
-void notify(sd_bus* bus, const char* summary)
+void notify(sd_bus* bus, const char* summary, const char* body)
 {
     sd_bus_message* m = NULL;
     int ret = sd_bus_message_new_method_call(bus, &m, "org.freedesktop.Notifications",
@@ -25,7 +25,7 @@ void notify(sd_bus* bus, const char* summary)
         &u, // UINT32 replaces_id
         "utilities-system-monitor", // STRING app_icon
         summary, // STRING summary
-        NULL, // STRING body
+        body, // STRING body
         0, // ARRAY actions
         0, // DICT hints
         &i // INT32 expire_timeout

@@ -12,5 +12,7 @@ install: systembus-notify
 	cp systembus-notify ${HOME}/bin
 	cp systembus-notify.desktop ${HOME}/.config/autostart
 
+.PHONY: test
 test: systembus-notify
+	cppcheck -q . || true
 	./testmessage.sh
