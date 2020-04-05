@@ -1,6 +1,8 @@
 systembus-notify - system bus notification daemon
 =================================================
 
+![C/C++ CI](https://github.com/rfjakob/systembus-notify/workflows/C/C++%20CI/badge.svg)
+
 Tiny daemon that listens for `net.nuetzlich.SystemNotifications.Notify`
 signals on the D-Bus **system** bus and shows them as
 [desktop notifications](https://developer.gnome.org/notification-spec/)
