@@ -25,7 +25,9 @@ int handle_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_error)
     // a second string value.
     const char* body = NULL;
     sd_bus_message_read_basic(m, 's', &body);
-    printf("%s\n%s\n", summary, body);
+    printf("received d-bus signal on system bus\n");
+    printf("↳ summary: %s\n", summary);
+    printf("↳ body:    %s\n", body);
     notify(user_bus, summary, body);
     return 0;
 }
@@ -43,6 +45,8 @@ int main(int argc, char* argv[])
         fprintf(stderr, "fatal: sd_bus_default_user: %s\n", strerror(-ret));
         exit(1);
     }
+    printf("d-bus connection to user bus ok\n");
+
     // Connect to system bus
     sd_bus* system_bus = NULL;
     ret = sd_bus_default_system(&system_bus);
@@ -50,6 +54,8 @@ int main(int argc, char* argv[])
         fprintf(stderr, "fatal: sd_bus_default_system: %s\n", strerror(-ret));
         exit(1);
     }
+    printf("d-bus connection to system bus ok\n");
+
     // Connect D-Bus signal handler
     const char* match_rule = "type='signal',interface='net.nuetzlich.SystemNotifications',member='Notify'";
     ret = sd_bus_add_match(system_bus, NULL, match_rule, handle_signal, NULL);
@@ -57,6 +63,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "fatal: sd_bus_match_signal: %s\n", strerror(-ret));
         exit(1);
     }
+    printf("waiting for d-bus signals on system bus: %s\n", match_rule);
     // Processing loop
     while (1) {
         ret = sd_bus_process(system_bus, NULL);

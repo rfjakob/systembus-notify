@@ -9,6 +9,7 @@
 void notify(sd_bus* bus, const char* summary, const char* body)
 {
     sd_bus_message* m = NULL;
+    printf("sending d-bus desktop notification on user bus: ");
     int ret = sd_bus_message_new_method_call(bus, &m, "org.freedesktop.Notifications",
         "/org/freedesktop/Notifications",
         "org.freedesktop.Notifications", "Notify");
@@ -41,4 +42,5 @@ void notify(sd_bus* bus, const char* summary, const char* body)
         fprintf(stderr, "sd_bus_call: %s\n", strerror(-ret));
         return;
     }
+    printf("ok\n");
 }
