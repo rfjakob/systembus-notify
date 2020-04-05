@@ -6,6 +6,8 @@ signals on the D-Bus **system** bus and shows them as
 [desktop notifications](https://developer.gnome.org/notification-spec/)
 using the **user** bus.
 
+![Bus Diagram](bus-diagram.svg)
+
 See https://github.com/rfjakob/earlyoom/issues/183 for the raison d'être.
 
 
