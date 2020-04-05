@@ -1,7 +1,7 @@
-CFLAGS += -Wall -Wextra -Wformat-security -Wconversion -fstack-protector-all -std=gnu99 -lsystemd -g
+CFLAGS += -Wall -Wextra -Wformat-security -Wconversion -fstack-protector-all -std=gnu99 -g
 
 systembus-notify: *.c *.h Makefile
-	$(CC) $(LDFLAGS) $(CFLAGS) -o systembus-notify *.c
+	$(CC) $(LDFLAGS) $(CFLAGS) -o systembus-notify *.c -lsystemd
 
 # Depends on compilation to make sure the syntax is ok.
 format: systembus-notify
