@@ -39,22 +39,23 @@ int main(int argc, char* argv[])
         fprintf(stderr, "(no parameters accepted)\n");
         exit(1);
     }
-    // Connect to user bus
+
+    printf("connecting to d-bus user bus: ");
     int ret = sd_bus_default_user(&user_bus);
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_bus_default_user: %s\n", strerror(-ret));
         exit(1);
     }
-    printf("d-bus connection to user bus ok\n");
+    printf("ok\n");
 
-    // Connect to system bus
+    printf("connecting to d-bus system bus: ");
     sd_bus* system_bus = NULL;
     ret = sd_bus_default_system(&system_bus);
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_bus_default_system: %s\n", strerror(-ret));
         exit(1);
     }
-    printf("d-bus connection to system bus ok\n");
+    printf("ok\n");
 
     // Connect D-Bus signal handler
     const char* match_rule = "type='signal',interface='net.nuetzlich.SystemNotifications',member='Notify'";
