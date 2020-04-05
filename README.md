@@ -55,13 +55,13 @@ Install it like this:
 Debian / Ubuntu
 
 ```
-apt install libsystemd-dev
+sudo apt install libsystemd-dev
 ```
 
 Fedora
 
 ```
-dnf install systemd-devel
+sudo dnf install systemd-devel
 ```
 
 See Also
