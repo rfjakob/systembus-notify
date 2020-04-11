@@ -44,6 +44,9 @@ int handle_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_error)
 
 int main(int argc, char* argv[])
 {
+    // Don't buffer our debug output indefinitely
+    // when we are connected to a file or journald.
+    setlinebuf(stdout);
     // Parse command line
     int c = 0;
     const char* short_opt = "hq";
