@@ -42,7 +42,10 @@ void notify(sd_bus* bus, const char* summary, const char* body)
     }
     ret = sd_bus_call(bus, m, 0, NULL, NULL);
     sd_bus_message_unref(m);
-    if (ret < 0) {
+    if (ret == -ENOTCONN) {
+        fprintf(stderr, "fatal: sd_bus_call: %s\n", strerror(-ret));
+        exit(FATAL_SEND_NOTIFY);
+    } else if (ret < 0) {
         fprintf(stderr, "sd_bus_call: %s\n", strerror(-ret));
         return;
     }
