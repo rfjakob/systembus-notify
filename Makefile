@@ -14,6 +14,13 @@ install: systembus-notify
 	cp systembus-notify.desktop ${HOME}/.config/autostart
 	cp systembus-notify.service ${HOME}/.config/systemd/user
 
+.PHONY: uninstall
+uninstall:
+	# delete in reverse order compared to install
+	rm -f ${HOME}/.config/systemd/user/systembus-notify.service
+	rm -f ${HOME}/.config/autostart/systembus-notify.desktop
+	rm -f ${HOME}/bin/systembus-notify
+
 .PHONY: test
 test: systembus-notify
 	cppcheck -q . || true
