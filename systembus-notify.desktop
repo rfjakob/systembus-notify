@@ -2,4 +2,3 @@
 Type=Application
 Name=systembus-notify
 Exec=systembus-notify
-
