@@ -1,0 +1,5 @@
+[Service]
+ExecStart=%h/bin/systembus-notify
+
+[Install]
+WantedBy=default.target

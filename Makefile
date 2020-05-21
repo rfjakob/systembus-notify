@@ -7,10 +7,12 @@ systembus-notify: *.c *.h Makefile
 format: systembus-notify
 	clang-format --style=WebKit -i *.h *.c
 
+.PHONY: install
 install: systembus-notify
-	mkdir -p ${HOME}/bin ${HOME}/.config/autostart
+	mkdir -p ${HOME}/bin ${HOME}/.config/autostart ${HOME}/.config/systemd/user
 	cp systembus-notify ${HOME}/bin
 	cp systembus-notify.desktop ${HOME}/.config/autostart
+	cp systembus-notify.service ${HOME}/.config/systemd/user
 
 .PHONY: test
 test: systembus-notify
