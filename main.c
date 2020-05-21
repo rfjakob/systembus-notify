@@ -18,8 +18,8 @@ enum {
     FATAL_SYSTEM_BUS_PROCESS = 5, // Problem processing d-bus signals from system d-bus
 };
 
-// handle_signal is called a "Notify" signal is received.
-int handle_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_error)
+// handle_dbus_signal is called when a d-bus "Notify" signal is received.
+int handle_dbus_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_error)
 {
     // unused
     (void)userdata;
@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
 
     // Connect D-Bus signal handler
     const char* match_rule = "type='signal',interface='net.nuetzlich.SystemNotifications',member='Notify'";
-    ret = sd_bus_add_match(system_bus, NULL, match_rule, handle_signal, NULL);
+    ret = sd_bus_add_match(system_bus, NULL, match_rule, handle_dbus_signal, NULL);
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_bus_match_signal: %s\n", strerror(-ret));
         exit(FATAL_SYSTEM_BUS);
