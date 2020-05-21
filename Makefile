@@ -9,10 +9,9 @@ format: systembus-notify
 
 .PHONY: install
 install: systembus-notify
-	mkdir -p ${HOME}/bin ${HOME}/.config/autostart ${HOME}/.config/systemd/user
+	mkdir -p ${HOME}/bin ${HOME}/.config/autostart
 	cp systembus-notify ${HOME}/bin
 	cp systembus-notify.desktop ${HOME}/.config/autostart
-	cp systembus-notify.service ${HOME}/.config/systemd/user
 
 .PHONY: uninstall
 uninstall:
