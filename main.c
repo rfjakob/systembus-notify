@@ -16,6 +16,7 @@ enum {
     FATAL_SYSTEM_BUS = 3, // Problem connecting to system d-bus
     FATAL_USER_BUS = 4, // Problem connecting to user d-bus
     FATAL_SYSTEM_BUS_PROCESS = 5, // Problem processing d-bus signals from system d-bus
+    FATAL_EVENT = 6, // Problem in event loop
 };
 
 // handle_dbus_signal is called when a d-bus "Notify" signal is received.
@@ -107,22 +108,27 @@ int main(int argc, char* argv[])
         exit(FATAL_SYSTEM_BUS);
     }
     debug("waiting for d-bus signals on system bus: %s\n", match_rule);
-    // Processing loop
-    while (1) {
-        ret = sd_bus_process(system_bus, NULL);
-        if (ret < 0) {
-            fprintf(stderr, "fatal: sd_bus_process: %s\n", strerror(-ret));
-            exit(FATAL_SYSTEM_BUS_PROCESS);
-        } else if (ret > 0) {
-            continue;
-        }
-        /* From man sd_bus_process:
-         * When zero is returned the caller should synchronously
-         * poll for I/O events before calling into sd_bus_process() */
-        ret = sd_bus_wait(system_bus, UINT64_MAX);
-        if (ret < 0) {
-            fprintf(stderr, "fatal: sd_bus_wait: %s\n", strerror(-ret));
-            exit(FATAL_SYSTEM_BUS_PROCESS);
-        }
+
+    // Set up event loop
+    sd_event *event = NULL;
+    ret = sd_event_default(&event);
+    if (ret < 0) {
+        fprintf(stderr, "fatal: sd_event_default: %s\n", strerror(-ret));
+        exit(FATAL_EVENT);
     }
+    ret = sd_bus_attach_event(user_bus, event, 0);
+    if (ret < 0) {
+        fprintf(stderr, "fatal: sd_bus_attach_event: %s\n", strerror(-ret));
+        exit(FATAL_EVENT);
+    }
+    ret = sd_bus_attach_event(system_bus, event, 0);
+    if (ret < 0) {
+        fprintf(stderr, "fatal: sd_bus_attach_event: %s\n", strerror(-ret));
+        exit(FATAL_EVENT);
+    }
+
+    // Run event loop (should not return)
+    ret = sd_event_loop(event);
+    fprintf(stderr, "fatal: sd_event_loop: %s\n", strerror(-ret));
+    exit(FATAL_EVENT);
 }
