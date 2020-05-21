@@ -10,15 +10,6 @@
 
 static sd_bus* user_bus = NULL;
 
-// Exit codes
-enum {
-    FATAL_USAGE = 2, // Usage error
-    FATAL_SYSTEM_BUS = 3, // Problem connecting to system d-bus
-    FATAL_USER_BUS = 4, // Problem connecting to user d-bus
-    FATAL_SYSTEM_BUS_PROCESS = 5, // Problem processing d-bus signals from system d-bus
-    FATAL_EVENT = 6, // Problem in event loop
-};
-
 // handle_dbus_signal is called when a d-bus "Notify" signal is received.
 int handle_dbus_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_error)
 {
@@ -45,8 +36,9 @@ int handle_dbus_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_erro
 
 int main(int argc, char* argv[])
 {
-    // Don't buffer our debug output indefinitely
-    // when we are connected to a file or journald.
+    // Don't buffer our debug output to prevent interleaving
+    // with stderr.
+    setvbuf(stdout, NULL, _IONBF, 0);
     setlinebuf(stdout);
     // Parse command line
     int c = 0;
@@ -83,13 +75,16 @@ int main(int argc, char* argv[])
     }
 
     // Connect to D-Buses
-    debug("connecting to d-bus user bus: ");
+    debug("connecting to d-bus user   bus: ");
     int ret = sd_bus_default_user(&user_bus);
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_bus_default_user: %s\n", strerror(-ret));
         exit(FATAL_USER_BUS);
+    } else {
+        const char* a = NULL;
+        sd_bus_get_address(user_bus, &a);
+        debug("ok: %s\n", a);
     }
-    debug("ok\n");
 
     debug("connecting to d-bus system bus: ");
     sd_bus* system_bus = NULL;
@@ -97,8 +92,11 @@ int main(int argc, char* argv[])
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_bus_default_system: %s\n", strerror(-ret));
         exit(FATAL_SYSTEM_BUS);
+    } else {
+        const char* a = NULL;
+        sd_bus_get_address(system_bus, &a);
+        debug("ok: %s\n", a);
     }
-    debug("ok\n");
 
     // Connect D-Bus signal handler
     const char* match_rule = "type='signal',interface='net.nuetzlich.SystemNotifications',member='Notify'";
@@ -110,7 +108,7 @@ int main(int argc, char* argv[])
     debug("waiting for d-bus signals on system bus: %s\n", match_rule);
 
     // Set up event loop
-    sd_event *event = NULL;
+    sd_event* event = NULL;
     ret = sd_event_default(&event);
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_event_default: %s\n", strerror(-ret));

@@ -1,6 +1,8 @@
 /* SPDX-License-Identifier: MIT */
 
+#include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <systemd/sd-bus.h>
 
 #include "log.h"
