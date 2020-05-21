@@ -84,6 +84,7 @@ int main(int argc, char* argv[])
         const char* a = NULL;
         sd_bus_get_address(user_bus, &a);
         debug("ok: %s\n", a);
+        sd_bus_set_exit_on_disconnect(user_bus, 1);
     }
 
     debug("connecting to d-bus system bus: ");
@@ -96,6 +97,7 @@ int main(int argc, char* argv[])
         const char* a = NULL;
         sd_bus_get_address(system_bus, &a);
         debug("ok: %s\n", a);
+        sd_bus_set_exit_on_disconnect(system_bus, 1);
     }
 
     // Connect D-Bus signal handler
