@@ -66,6 +66,27 @@ Fedora
 sudo dnf install systemd-devel
 ```
 
+Send notifications from your service
+------------------------------------
+
+The simplest way is to call the `dbus-send` tool.
+
+Shell:
+```sh
+dbus-send --system / net.nuetzlich.SystemNotifications.Notify "string:hello world"
+
+```
+
+C (don't use `system()`, it's insecure!):
+```C
+int pid = fork();
+if (pid == 0)
+	execl("/usr/bin/dbus-send", "dbus-send", "--system", "/", "net.nuetzlich.SystemNotifications.Notify", "string:hello world", NULL);
+```
+
+You can also use libdbus or another d-bus library to send the signal.
+In any case, systembus-notify must be running for the notification to pop up.
+
 See Also
 --------
 
