@@ -23,17 +23,15 @@ void notify(sd_bus* bus, const char* summary, const char* body)
     }
     // Fill out the parameters according to
     // https://developer.gnome.org/notification-spec/#command-notify
-    uint32_t u = 0;
-    int32_t i = -1;
     ret = sd_bus_message_append(m, "susssasa{sv}i",
         "system-notify", // STRING app_name
-        &u, // UINT32 replaces_id
+        0, // UINT32 replaces_id
         "utilities-system-monitor", // STRING app_icon
         summary, // STRING summary
         body, // STRING body
         0, // ARRAY actions
         0, // DICT hints
-        &i // INT32 expire_timeout
+        -1 // INT32 expire_timeout
     );
     if (ret < 0) {
         fprintf(stderr, "sd_bus_message_append: %s\n", strerror(-ret));
