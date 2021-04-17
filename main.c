@@ -23,14 +23,31 @@ int handle_dbus_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_erro
         fprintf(stderr, "sd_bus_message_read_basic: %s\n", strerror(-ret));
         return 0;
     }
-    // body is optional. It stays NULL when the signal does not contain
-    // a second string value.
     const char* body = NULL;
-    sd_bus_message_read_basic(m, 's', &body);
+    ret = sd_bus_message_read_basic(m, 's', &body);
+    if (ret < 0) {
+        fprintf(stderr, "sd_bus_message_read_basic: %s\n", strerror(-ret));
+        return 0;
+    }
+
+    // optional
+    // "utilities-system-monitor"
+    const char* app = "system-notify";
+    sd_bus_message_read_basic(m, 's', &app);
+    uint32_t id = 0;
+    sd_bus_message_read_basic(m, 'u', &id);
+    const char* icon = "gtk-dialog-info";
+    sd_bus_message_read_basic(m, 's', &icon);
+    int32_t timeout = -1;
+    sd_bus_message_read_basic(m, 'i', &timeout);
     debug("\nreceived d-bus signal on system bus\n");
+    debug("↳ app:     %s\n", app);
+    debug("↳ id:      %u\n", id);
+    debug("↳ icon:    %s\n", icon);
     debug("↳ summary: %s\n", summary);
     debug("↳ body:    %s\n", body);
-    notify(user_bus, summary, body);
+    debug("↳ timeout: %i\n", timeout);
+    notify(user_bus, app, id, icon, summary, body, timeout);
     return 0;
 }
 
