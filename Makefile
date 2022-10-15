@@ -1,7 +1,11 @@
 CFLAGS += -Wall -Wextra -Wformat-security -Wconversion -fstack-protector-all -std=gnu99 -g
 
+LIBSYSTEMD_PROVIDER=$(shell pkg-config --exists libelogind && printf "libelogind" || printf "libsystemd")
+LIBSYSTEMD_PROVIDER_INCLUDE_DIR=$(shell { [ -n "$$(pkg-config --cflags-only-I $(LIBSYSTEMD_PROVIDER))" ] && pkg-config --cflags-only-I $(LIBSYSTEMD_PROVIDER); } || printf " ")
+LIBSYSTEMD_PROVIDER_LDFLAGS=$(shell pkg-config --libs $(LIBSYSTEMD_PROVIDER))
+
 systembus-notify: *.c *.h Makefile
-	$(CC) $(LDFLAGS) $(CFLAGS) -o systembus-notify *.c -lsystemd
+	$(CC) $(LDFLAGS) $(CFLAGS) $(LIBSYSTEMD_PROVIDER_INCLUDE_DIR) -o systembus-notify *.c $(LIBSYSTEMD_PROVIDER_LDFLAGS)
 
 # Depends on compilation to make sure the syntax is ok.
 format: systembus-notify
@@ -24,3 +28,7 @@ uninstall:
 test: systembus-notify
 	cppcheck -q . || true
 	./testmessage.sh
+
+.PHONY: clean
+clean:
+	rm -f systembus-notify
