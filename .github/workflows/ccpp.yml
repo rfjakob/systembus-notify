@@ -20,7 +20,6 @@ jobs:
 
 # Build in Debian container with libsystemd
 # ("make test" does not work in container)
-
     - name: Build in Debian container with libsystemd
       uses: addnab/docker-run-action@v3
       with:
@@ -30,6 +29,21 @@ jobs:
           set -ex
           apt-get -qq update > /dev/null < /dev/null
           apt-get -qq install make gcc libsystemd-dev > /dev/null < /dev/null
+          cd /work
+          make
+    - run: git clean -dxff
+
+# Build in Debian container with libelogind
+# ("make test" does not work in container)
+    - name: Build in Debian container with libelogind
+      uses: addnab/docker-run-action@v3
+      with:
+        image: debian:bullseye
+        options: -v ${{ github.workspace }}:/work
+        run: |
+          set -ex
+          apt-get -qq update > /dev/null < /dev/null
+          apt-get -qq install make gcc pkg-config libelogind-dev > /dev/null < /dev/null
           cd /work
           make
     - run: git clean -dxff
