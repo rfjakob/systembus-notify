@@ -1,7 +1,18 @@
 CFLAGS += -Wall -Wextra -Wformat-security -Wconversion -fstack-protector-all -std=gnu99 -g
 
+# If the user has libelogind installed, we can assume
+# that they want to use libelogind instead of libsystemd.
+$(shell pkg-config --exists libelogind 2> /dev/null)
+ifeq ($(.SHELLSTATUS),0)
+$(info libelogind is installed: using libelogind instead of libsystemd)
+CFLAGS += $(shell pkg-config --cflags libelogind)
+LDLIBS += $(shell pkg-config --libs libelogind)
+else
+LDLIBS += -lsystemd
+endif
+
 systembus-notify: *.c *.h Makefile
-	$(CC) $(LDFLAGS) $(CFLAGS) -o systembus-notify *.c -lsystemd
+	$(CC) $(LDFLAGS) $(CFLAGS) -o systembus-notify *.c $(LDLIBS)
 
 # Depends on compilation to make sure the syntax is ok.
 format: systembus-notify
