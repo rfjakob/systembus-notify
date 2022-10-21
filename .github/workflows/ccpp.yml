@@ -2,20 +2,53 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
+  schedule:
+    - cron: '0 12 * * *' # Every day noon UTC
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: apt 
-      run: sudo apt-get install libsystemd-dev
+
+# Build and test in Ubuntu VM provided by Github CI
+    - name: Checkout and git clean
+      uses: actions/checkout@v3
+    - name: apt
+      run: sudo apt-get -qq install libsystemd-dev > /dev/null < /dev/null
     - name: make
       run: make
     - name: make test
       run: make test
+    - run: git clean -dxff
+
+# Build in Debian container with libsystemd
+# ("make test" does not work in container)
+
+    - name: Build in Debian container with libsystemd
+      uses: addnab/docker-run-action@v3
+      with:
+        image: debian:bullseye
+        options: -v ${{ github.workspace }}:/work
+        run: |
+          set -ex
+          apt-get -qq update > /dev/null < /dev/null
+          apt-get -qq install make gcc libsystemd-dev > /dev/null < /dev/null
+          cd /work
+          make
+    - run: git clean -dxff
+
+# Build in Fedora container with libsystemd
+# ("make test" does not work in container)
+    - name: Build in Fedora container
+      uses: addnab/docker-run-action@v3
+      with:
+        image: fedora:36
+        options: -v ${{ github.workspace }}:/work
+        run: |
+          set -ex
+          dnf -qy install make gcc systemd-devel
+          cd /work
+          git clean -dxff
+          make
+    - run: git clean -dxff
