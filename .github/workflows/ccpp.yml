@@ -1,10 +1,10 @@
-name: C/C++ CI
+name: CI
 
 on:
   push:
   pull_request:
   schedule:
-    - cron: '0 12 * * *' # Every day noon UTC
+    - cron: '0 23 * * 5' # Every Friday at 23:00
 
 jobs:
   build:
