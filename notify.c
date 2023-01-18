@@ -10,7 +10,7 @@
 // notify sends a desktop notification according to the
 // Desktop Notifications Specification
 // (https://developer.gnome.org/notification-spec/).
-void notify(sd_bus* bus, const char* summary, const char* body)
+void notify(sd_bus* bus, const char* app, uint32_t id, const char* icon, const char* summary, const char* body, int32_t timeout)
 {
     sd_bus_message* m = NULL;
     debug("sending d-bus desktop notification on user bus: ");
@@ -24,14 +24,14 @@ void notify(sd_bus* bus, const char* summary, const char* body)
     // Fill out the parameters according to
     // https://developer.gnome.org/notification-spec/#command-notify
     ret = sd_bus_message_append(m, "susssasa{sv}i",
-        "system-notify", // STRING app_name
-        0, // UINT32 replaces_id
-        "utilities-system-monitor", // STRING app_icon
+        app,  // STRING app_name
+        id,   // UINT32 replaces_id
+        icon, // STRING app_icon
         summary, // STRING summary
         body, // STRING body
-        0, // ARRAY actions
-        0, // DICT hints
-        -1 // INT32 expire_timeout
+        0,    // ARRAY actions
+        0,    // DICT hints
+        timeout // INT32 expire_timeout
     );
     if (ret < 0) {
         fprintf(stderr, "sd_bus_message_append: %s\n", strerror(-ret));
