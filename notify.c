@@ -24,7 +24,7 @@ void notify(sd_bus* bus, const char* summary, const char* body)
     // Fill out the parameters according to
     // https://developer.gnome.org/notification-spec/#command-notify
     ret = sd_bus_message_append(m, "susssasa{sv}i",
-        "system-notify", // STRING app_name
+        "systembus-notify", // STRING app_name
         0, // UINT32 replaces_id
         "utilities-system-monitor", // STRING app_icon
         summary, // STRING summary
