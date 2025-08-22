@@ -35,3 +35,7 @@ uninstall:
 test: systembus-notify
 	cppcheck -q . || true
 	./testmessage.sh
+
+.PHONY: clean
+clean:
+	rm -f systembus-notify
