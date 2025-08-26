@@ -25,9 +25,7 @@ int handle_dbus_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_erro
     // a second string value.
     const char* body = NULL;
     sd_bus_message_read_basic(m, 's', &body);
-    debug("\nreceived d-bus signal on system bus\n");
-    debug("↳ summary: %s\n", summary);
-    debug("↳ body:    %s\n", body);
+    debug("received d-bus signal on system bus: summary=%s body=%s\n", summary, body);
     notify(user_bus, summary, body);
     return 0;
 }
