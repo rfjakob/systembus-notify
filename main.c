@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: MIT */
 
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <systemd/sd-bus.h>
@@ -9,6 +10,23 @@
 #include "notify.h"
 
 static sd_bus* user_bus = NULL;
+
+// Did we alread send a notification this decisecond (tenth of a second)?
+bool over_ratelimit() {
+    static long decisec_last = 0;
+
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    long decisec_now = now.tv_sec*10+now.tv_nsec/100000000;
+
+    // Decisec has rolled over?
+    if (decisec_last != decisec_now) {
+        decisec_last = decisec_now;
+        return false;
+    }
+
+    return true;
+}
 
 // handle_dbus_signal is called when a d-bus "Notify" signal is received.
 int handle_dbus_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_error)
@@ -26,6 +44,10 @@ int handle_dbus_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_erro
     const char* body = NULL;
     sd_bus_message_read_basic(m, 's', &body);
     debug("received d-bus signal on system bus: summary=%s body=%s\n", summary, body);
+    if(over_ratelimit()) {
+        fprintf(stderr, "over ratelimit, dropping message\n");
+        return 0;
+    }
     notify(user_bus, summary, body);
     return 0;
 }
