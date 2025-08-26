@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <systemd/sd-bus.h>
+#include <unistd.h>
 
 #include "log.h"
 #include "notify.h"
@@ -93,34 +94,38 @@ int main(int argc, char* argv[])
     }
 
     // Connect to D-Buses
-    debug("connecting to d-bus user   bus: ");
-    int ret = sd_bus_default_user(&user_bus);
-    if (ret < 0) {
-        fprintf(stderr, "fatal: sd_bus_default_user: %s\n", strerror(-ret));
-        exit(FATAL_USER_BUS);
-    } else {
-        const char* a = NULL;
-        sd_bus_get_address(user_bus, &a);
-        debug("ok: %s\n", a);
-        sd_bus_set_exit_on_disconnect(user_bus, 1);
+    while(1) {
+        debug("connecting to d-bus user   bus: ");
+        int ret = sd_bus_default_user(&user_bus);
+        if(ret >= 0) {
+            const char* a = NULL;
+            sd_bus_get_address(user_bus, &a);
+            debug("ok: %s\n", a);
+            sd_bus_set_exit_on_disconnect(user_bus, 1);
+            break;
+        }
+        fprintf(stderr, "sd_bus_default_user: %s. Retrying\n", strerror(-ret));
+        sleep(1);
     }
 
-    debug("connecting to d-bus system bus: ");
     sd_bus* system_bus = NULL;
-    ret = sd_bus_default_system(&system_bus);
-    if (ret < 0) {
-        fprintf(stderr, "fatal: sd_bus_default_system: %s\n", strerror(-ret));
-        exit(FATAL_SYSTEM_BUS);
-    } else {
-        const char* a = NULL;
-        sd_bus_get_address(system_bus, &a);
-        debug("ok: %s\n", a);
-        sd_bus_set_exit_on_disconnect(system_bus, 1);
+    while(1) {
+        debug("connecting to d-bus system bus: ");
+        int ret = sd_bus_default_system(&system_bus);
+        if(ret >= 0) {
+            const char* a = NULL;
+            sd_bus_get_address(system_bus, &a);
+            debug("ok: %s\n", a);
+            sd_bus_set_exit_on_disconnect(system_bus, 1);
+            break;
+        }
+        fprintf(stderr, "sd_bus_default_system: %s. Retrying\n", strerror(-ret));
+        sleep(1);
     }
 
     // Connect D-Bus signal handler
     const char* match_rule = "type='signal',interface='net.nuetzlich.SystemNotifications',member='Notify'";
-    ret = sd_bus_add_match(system_bus, NULL, match_rule, handle_dbus_signal, NULL);
+    int ret = sd_bus_add_match(system_bus, NULL, match_rule, handle_dbus_signal, NULL);
     if (ret < 0) {
         fprintf(stderr, "fatal: sd_bus_match_signal: %s\n", strerror(-ret));
         exit(FATAL_SYSTEM_BUS);
