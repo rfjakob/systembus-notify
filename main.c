@@ -17,12 +17,10 @@ int handle_dbus_signal(sd_bus_message* m, void* userdata, sd_bus_error* ret_erro
     (void)userdata;
     (void)ret_error;
 
+    // summary is optional. It stays NULL when the signal does not contain
+    // a string value.
     const char* summary = NULL;
-    int ret = sd_bus_message_read_basic(m, 's', &summary);
-    if (ret < 0) {
-        fprintf(stderr, "sd_bus_message_read_basic: %s\n", strerror(-ret));
-        return 0;
-    }
+    sd_bus_message_read_basic(m, 's', &summary);
     // body is optional. It stays NULL when the signal does not contain
     // a second string value.
     const char* body = NULL;
