@@ -22,7 +22,7 @@ void notify(sd_bus* bus, const char* summary, const char* body)
         return;
     }
     // Fill out the parameters according to
-    // https://developer.gnome.org/notification-spec/#command-notify
+    // https://specifications.freedesktop.org/notification-spec/1.3/protocol.html#command-notify
     ret = sd_bus_message_append(m, "susssasa{sv}i",
         "systembus-notify", // STRING app_name
         0, // UINT32 replaces_id
